@@ -42,7 +42,7 @@ with open(_logo_path, 'rb') as _f:
     _logo_b64 = base64.b64encode(_f.read()).decode()
 
 # ── Global CSS ─────────────────────────────────────────────────────────────────
-st.markdown("""
+st.html("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
@@ -199,7 +199,7 @@ hr {
     pointer-events: none;
 }
 </style>
-""", unsafe_allow_html=True)
+""")
 
 # ── Zaman dilimleri ────────────────────────────────────────────────────────────
 EASTERN_TZ = timezone(timedelta(hours=-5))
@@ -210,16 +210,16 @@ if "section" not in st.session_state:
     st.session_state["section"] = "tahmin"
 
 with st.sidebar:
-    st.markdown("""
+    st.html("""
 <div class="sidebar-logo-wrapper">
   <div style="line-height:1.15;">
     <span style="font-size:22px;font-weight:900;color:#e2e8f0;letter-spacing:-.5px;">Pro</span><span style="font-size:22px;font-weight:900;color:#3b82f6;letter-spacing:-.5px;">Score</span>
   </div>
   <div style="font-size:9.5px;color:#2d4a66;letter-spacing:3px;text-transform:uppercase;font-weight:700;margin-top:4px;">Analytics</div>
 </div>
-""", unsafe_allow_html=True)
+""")
 
-    st.markdown('<div style="height:6px"></div>', unsafe_allow_html=True)
+    st.html('<div style="height:6px"></div>')
 
     _sec = st.session_state["section"]
     if st.button("Tahmin", use_container_width=True,
@@ -229,7 +229,7 @@ with st.sidebar:
                  type="primary" if _sec == "sonuclar" else "secondary", key="nav_sonuclar"):
         st.session_state["section"] = "sonuclar"; st.rerun()
 
-    st.markdown('<hr class="sb-sep"><div class="sb-label">Lig Seçimi</div>', unsafe_allow_html=True)
+    st.html('<hr class="sb-sep"><div class="sb-label">Lig Seçimi</div>')
 
     selected_league = st.selectbox("Lig seçin:", list(LEAGUES.keys()),
                                    label_visibility="collapsed", key="_league_selectbox")
@@ -238,26 +238,26 @@ with st.sidebar:
     _sb_logo   = league_cfg.get("logo", "")
     _badge_bg  = "#17408b" if is_nba else "#ffffff"
     _logo_size = "20px"    if is_nba else "18px"
-    st.markdown(f"""
+    st.html(f"""
 <style>
 [data-testid="stSelectbox"] > div > div::before {{
     background-color: {_badge_bg};
     background-image: url({_sb_logo});
     background-size: {_logo_size} {_logo_size};
 }}
-</style>""", unsafe_allow_html=True)
+</style>""")
 
-    st.markdown('<hr class="sb-sep">', unsafe_allow_html=True)
+    st.html('<hr class="sb-sep">')
     if st.button("Verileri Yenile", use_container_width=True, key="btn_refresh"):
         import shutil, os
         if os.path.exists("data"): shutil.rmtree("data")
         os.makedirs("data", exist_ok=True)
         st.cache_data.clear(); st.rerun()
 
-    st.markdown(f"""
+    st.html(f"""
 <div class="sidebar-footer">
   Önbellek 30 dk &nbsp;·&nbsp; {datetime.now().strftime('%H:%M')}
-</div>""", unsafe_allow_html=True)
+</div>""")
 
 
 # ── HTML yardımcı bileşenler ───────────────────────────────────────────────────
@@ -339,8 +339,7 @@ def _render_form_chart_html(form: list[dict], trend: dict) -> None:
                   f'<span style="font-size:11px;color:#1e3a5f">·</span>'
                   f'<span style="font-size:11px;color:#334155">Son6: %{l6}</span>'
                   f'</div>')
-    st.markdown(f'<div style="padding:4px 0 10px">{strip}{trend_html}</div>',
-                unsafe_allow_html=True)
+    st.html(f'<div style="padding:4px 0 10px">{strip}{trend_html}</div>')
 
 
 def _render_nba_box_score(box, home_team, away_team, home_logo="", away_logo=""):
@@ -349,9 +348,8 @@ def _render_nba_box_score(box, home_team, away_team, home_logo="", away_logo="")
     col_h, col_a = st.columns(2)
     def _player_table(players, title, logo, col):
         with col:
-            st.markdown(f'<div style="font-size:13px;font-weight:700;color:#94a3b8;'
-                        f'margin-bottom:8px">{_logo_img(logo,18,"4px")} {title}</div>',
-                        unsafe_allow_html=True)
+            st.html(f'<div style="font-size:13px;font-weight:700;color:#94a3b8;'
+                        f'margin-bottom:8px">{_logo_img(logo,18,"4px")} {title}</div>')
             if not players: st.info("Oyuncu verisi yok."); return
             sorted_p = sorted(players, key=lambda p: -int(p["min"].split(":")[0]) if ":" in p["min"] else -int(p["min"] or 0))
             rows = []
@@ -460,21 +458,19 @@ if _sec == "tahmin":
 
     # ── Başlık satırı ─────────────────────────────────────────────────────────
     _lig_logo = league_cfg.get("logo", "")
-    st.markdown(
+    st.html(
         f'<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px">'
         f'{_logo_img(_lig_logo, 40, "10px")}'
         f'<div>'
         f'<div style="font-size:24px;font-weight:900;color:#f1f5f9;letter-spacing:-.3px">{selected_league}</div>'
         f'<div style="font-size:12px;color:#334155;font-weight:600;letter-spacing:.8px;text-transform:uppercase">Maç Tahmin Analizi</div>'
-        f'</div></div>',
-        unsafe_allow_html=True,
-    )
+        f'</div></div>')
 
     col_date, col_btn = st.columns([4, 1])
     with col_date:
         tahmin_date = st.date_input(date_label, value=default_tahmin, format="DD/MM/YYYY", key="tahmin_date_input")
     with col_btn:
-        st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+        st.html("<div style='height:28px'></div>")
         sorgula = st.button("🔍  Analiz Et", type="primary", use_container_width=True, key="btn_tahmin")
 
     if sorgula:
@@ -490,12 +486,12 @@ if _sec == "tahmin":
     data = st.session_state.get("tahmin_data")
 
     if data is None:
-        st.markdown("""
+        st.html("""
 <div style="text-align:center;padding:80px 20px">
   <div style="font-size:56px;margin-bottom:20px;opacity:.4">🔮</div>
   <div style="font-size:20px;font-weight:700;color:#1e3a5f;margin-bottom:8px">Analiz için hazır</div>
   <div style="font-size:14px;color:#1a2f4e">Lig ve tarih seçtikten sonra <b style="color:#2563eb">Analiz Et</b> butonuna basın.</div>
-</div>""", unsafe_allow_html=True)
+</div>""")
 
     elif not data:
         st.warning(f"{selected_league} — bu tarihte programlanmış maç bulunamadı.")
@@ -572,13 +568,13 @@ if _sec == "tahmin":
             for i, h in enumerate(header_cols)
         )
 
-        st.markdown(f"""
+        st.html(f"""
 <div style="background:#080f1f;border:1px solid #0f1f38;border-radius:16px;overflow:hidden;margin-bottom:24px">
   <table style="width:100%;border-collapse:collapse">
     <thead><tr style="background:#0a1526">{th_html}</tr></thead>
     <tbody>{rows_html}</tbody>
   </table>
-</div>""", unsafe_allow_html=True)
+</div>""")
 
         # ── Her maç için detay kartı ──────────────────────────────────────────
         for d in data:
@@ -606,7 +602,7 @@ if _sec == "tahmin":
                 px = round(prob.get("draw", 0) * 100, 1)
                 pa = round(prob["away"] * 100, 1)
 
-                st.markdown(f"""
+                st.html(f"""
 <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;
             padding:20px 4px 16px;border-bottom:1px solid #0f1f38;margin-bottom:20px">
   <div style="display:flex;align-items:center;justify-content:flex-end;gap:12px">
@@ -630,7 +626,7 @@ if _sec == "tahmin":
     {_logo_img(_al, 44, "12px")}
   </div>
 </div>
-""", unsafe_allow_html=True)
+""")
 
                 # B2B uyarısı NBA
                 if is_nba_data:
@@ -652,20 +648,20 @@ if _sec == "tahmin":
                     _ar    = pred.get("away_rest_days")
 
                     mc1, mc2, mc3, mc4, mc5 = st.columns(5)
-                    mc1.markdown(_metric_card("Gol Tahmini", pred["goal_prediction"],
-                                              f"λ {pred['exp_total_goals']} beklenen", "#3b82f6"), unsafe_allow_html=True)
-                    mc2.markdown(_metric_card("KG VAR/YOK", _kg, f"%{_btts} olasılık", _kg_c, glow=True), unsafe_allow_html=True)
-                    mc3.markdown(_metric_card("Üst 2.5", f"%{_o25}", "Gol toplamı", _o25c), unsafe_allow_html=True)
-                    mc4.markdown(_metric_card("Üst 3.5", f"%{_o35}", "Gol toplamı", _o35c), unsafe_allow_html=True)
-                    mc5.markdown(_metric_card("Dinlenme", f"{_hr or '?'} / {_ar or '?'}",
-                                              "Ev / Dep gün", "#64748b"), unsafe_allow_html=True)
-                    st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
+                    mc1.html(_metric_card("Gol Tahmini", pred["goal_prediction"],
+                                              f"λ {pred['exp_total_goals']} beklenen", "#3b82f6"))
+                    mc2.html(_metric_card("KG VAR/YOK", _kg, f"%{_btts} olasılık", _kg_c, glow=True))
+                    mc3.html(_metric_card("Üst 2.5", f"%{_o25}", "Gol toplamı", _o25c))
+                    mc4.html(_metric_card("Üst 3.5", f"%{_o35}", "Gol toplamı", _o35c))
+                    mc5.html(_metric_card("Dinlenme", f"{_hr or '?'} / {_ar or '?'}",
+                                              "Ev / Dep gün", "#64748b"))
+                    st.html("<div style='height:14px'></div>")
 
                 else:
                     mc1, mc2 = st.columns(2)
-                    mc1.markdown(_metric_card("Tahmin", exp_pred, "", pred_col, glow=True), unsafe_allow_html=True)
-                    mc2.markdown(_metric_card("Güven", f"%{pred['confidence']}", "", "#3b82f6"), unsafe_allow_html=True)
-                    st.markdown("<div style='height:14px'></div>", unsafe_allow_html=True)
+                    mc1.html(_metric_card("Tahmin", exp_pred, "", pred_col, glow=True))
+                    mc2.html(_metric_card("Güven", f"%{pred['confidence']}", "", "#3b82f6"))
+                    st.html("<div style='height:14px'></div>")
 
                 # ── İki sütunlu alan ─────────────────────────────────────────
                 col_left, col_right = st.columns([1, 1])
@@ -673,7 +669,7 @@ if _sec == "tahmin":
                 with col_left:
                     # Olasılık barı (futbol)
                     if not is_nba_data:
-                        st.markdown(_section_header("1 / X / 2 Olasılıkları", "📊"), unsafe_allow_html=True)
+                        st.html(_section_header("1 / X / 2 Olasılıkları", "📊"))
                         fig = go.Figure()
                         cats = ["Ev (1)", "Beraberlik (X)", "Deplasman (2)"]
                         vals = [ph, px, pa]
@@ -699,7 +695,7 @@ if _sec == "tahmin":
 
                         # Oran vs Tahmin
                         if any(odds.get(k) for k in ["home_win", "draw", "away_win"]):
-                            st.markdown(_section_header("Piyasa vs Tahminimiz", "⚖️"), unsafe_allow_html=True)
+                            st.html(_section_header("Piyasa vs Tahminimiz", "⚖️"))
                             labels2, bil_probs2, our_probs2 = [], [], []
                             for lbl, ok, op in [("1","home_win",prob["home"]),("X","draw",prob.get("draw",0)),("2","away_win",prob["away"])]:
                                 odd = odds.get(ok)
@@ -729,10 +725,10 @@ if _sec == "tahmin":
 
                     else:
                         # NBA olasılık barı
-                        st.markdown(_section_header("Kazanma Olasılığı", "📊"), unsafe_allow_html=True)
+                        st.html(_section_header("Kazanma Olasılığı", "📊"))
                         h_bold = "font-weight:900;" if ph >= pa else "opacity:.55;"
                         a_bold = "font-weight:900;" if pa > ph  else "opacity:.55;"
-                        st.markdown(f"""
+                        st.html(f"""
 <div style="padding:4px 0 16px">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
     <div style="display:flex;align-items:center;gap:8px">{_logo_img(_hl,24,"6px")}
@@ -748,19 +744,19 @@ if _sec == "tahmin":
       <span style="font-size:13px;font-weight:900;color:#fff">%{pa}</span>
     </div>
   </div>
-</div>""", unsafe_allow_html=True)
+</div>""")
 
                 with col_right:
-                    st.markdown(_section_header(f"{m['home_team']} — Son Form", "📋"), unsafe_allow_html=True)
+                    st.html(_section_header(f"{m['home_team']} — Son Form", "📋"))
                     _render_form_chart_html(home_form, pred.get("home_form_trend", {}))
-                    st.markdown(_section_header(f"{m['away_team']} — Son Form", "📋"), unsafe_allow_html=True)
+                    st.html(_section_header(f"{m['away_team']} — Son Form", "📋"))
                     _render_form_chart_html(away_form, pred.get("away_form_trend", {}))
 
                 # ── Skor matrisi (futbol) ─────────────────────────────────────
                 if not is_nba_data:
                     correct_scores = pred.get("correct_scores", [])
                     if correct_scores:
-                        st.markdown(_section_header("En Olası Skorlar (Poisson)", "🎯"), unsafe_allow_html=True)
+                        st.html(_section_header("En Olası Skorlar (Poisson)", "🎯"))
                         max_prob = max((cs["prob"] for cs in correct_scores), default=1)
                         cs_html = ""
                         for idx, cs in enumerate(correct_scores):
@@ -776,17 +772,15 @@ if _sec == "tahmin":
                                 f'</div>'
                             )
                         st.markdown(
-                            f'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px">{cs_html}</div>',
-                            unsafe_allow_html=True,
-                        )
+                            f'<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px">{cs_html}</div>')
 
                 # ── Value Bet ─────────────────────────────────────────────────
                 vbets = pred.get("value_bets", [])
                 if vbets:
-                    st.markdown(_section_header("Value Bet Fırsatları", "💰"), unsafe_allow_html=True)
+                    st.html(_section_header("Value Bet Fırsatları", "💰"))
                     for vb in vbets:
                         edge_w = min(100, int(vb["edge"] * 3))
-                        st.markdown(f"""
+                        st.html(f"""
 <div style="background:#051a0f;border:1px solid #14532d;border-radius:12px;padding:14px 18px;margin-bottom:8px">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
     <div>
@@ -808,32 +802,32 @@ if _sec == "tahmin":
       </div>
     </div>
   </div>
-</div>""", unsafe_allow_html=True)
+</div>""")
 
                 # ── NBA gelişmiş istatistikler ─────────────────────────────────
                 if is_nba_data:
                     h_rtg = d.get("home_ratings", {}); a_rtg = d.get("away_ratings", {})
                     if h_rtg or a_rtg:
-                        st.markdown(_section_header("Gelişmiş İstatistikler", "📈"), unsafe_allow_html=True)
+                        st.html(_section_header("Gelişmiş İstatistikler", "📈"))
                         rtg_c1, rtg_c2 = st.columns(2)
                         for col_, rtg, name, logo in [(rtg_c1, h_rtg, m["home_team"], _hl), (rtg_c2, a_rtg, m["away_team"], _al)]:
                             with col_:
-                                st.markdown(f'<div style="font-size:13px;font-weight:700;color:#64748b;margin-bottom:10px">{_logo_img(logo,16,"4px")} {name}</div>', unsafe_allow_html=True)
+                                st.html(f'<div style="font-size:13px;font-weight:700;color:#64748b;margin-bottom:10px">{_logo_img(logo,16,"4px")} {name}</div>')
                                 if rtg:
                                     r1,r2,r3,r4 = st.columns(4)
-                                    r1.markdown(_metric_card("OffRtg", f"{rtg.get('off_rtg',0):.1f}" if rtg.get('off_rtg') else "—","","#3b82f6"), unsafe_allow_html=True)
-                                    r2.markdown(_metric_card("DefRtg", f"{rtg.get('def_rtg',0):.1f}" if rtg.get('def_rtg') else "—","","#ef4444"), unsafe_allow_html=True)
-                                    r3.markdown(_metric_card("NetRtg", f"{rtg.get('net_rtg',0):.1f}" if rtg.get('net_rtg') else "—","","#10b981"), unsafe_allow_html=True)
-                                    r4.markdown(_metric_card("Pace",   f"{rtg.get('pace',0):.1f}"   if rtg.get('pace')   else "—","","#f59e0b"), unsafe_allow_html=True)
+                                    r1.html(_metric_card("OffRtg", f"{rtg.get('off_rtg',0):.1f}" if rtg.get('off_rtg') else "—","","#3b82f6"))
+                                    r2.html(_metric_card("DefRtg", f"{rtg.get('def_rtg',0):.1f}" if rtg.get('def_rtg') else "—","","#ef4444"))
+                                    r3.html(_metric_card("NetRtg", f"{rtg.get('net_rtg',0):.1f}" if rtg.get('net_rtg') else "—","","#10b981"))
+                                    r4.html(_metric_card("Pace",   f"{rtg.get('pace',0):.1f}"   if rtg.get('pace')   else "—","","#f59e0b"))
 
                     home_load_data = d.get("home_load", [])
                     away_load_data = d.get("away_load", [])
                     if home_load_data or away_load_data:
-                        st.markdown(_section_header("Load Management", "⏱"), unsafe_allow_html=True)
+                        st.html(_section_header("Load Management", "⏱"))
                         lc1, lc2 = st.columns(2)
                         for col_, ld, name, logo in [(lc1, home_load_data, m["home_team"], _hl), (lc2, away_load_data, m["away_team"], _al)]:
                             with col_:
-                                st.markdown(f'<div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px">{_logo_img(logo,16,"4px")} {name}</div>', unsafe_allow_html=True)
+                                st.html(f'<div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:8px">{_logo_img(logo,16,"4px")} {name}</div>')
                                 if ld:
                                     st.dataframe(pd.DataFrame(ld)[["name","season_min","last5_min","flag"]].rename(columns={"name":"Oyuncu","season_min":"Sezon Dk","last5_min":"Son5 Dk","flag":"Uyarı"}), hide_index=True, use_container_width=True)
                                 else:
@@ -850,22 +844,20 @@ elif _sec == "sonuclar":
         max_sonuc_date = datetime.now(TURKISH_TZ).date() - timedelta(days=1)
 
     _lig_logo = league_cfg.get("logo", "")
-    st.markdown(
+    st.html(
         f'<div style="display:flex;align-items:center;gap:14px;margin-bottom:24px">'
         f'{_logo_img(_lig_logo, 40, "10px")}'
         f'<div>'
         f'<div style="font-size:24px;font-weight:900;color:#f1f5f9;letter-spacing:-.3px">{selected_league}</div>'
         f'<div style="font-size:12px;color:#334155;font-weight:600;letter-spacing:.8px;text-transform:uppercase">Geçmiş Sonuçlar</div>'
-        f'</div></div>',
-        unsafe_allow_html=True,
-    )
+        f'</div></div>')
 
     sc_col_date, sc_col_btn = st.columns([4, 1])
     with sc_col_date:
         sonuc_date = st.date_input("Tarih seçin:", value=max_sonuc_date, max_value=max_sonuc_date,
                                    format="DD/MM/YYYY", key="sonuclar_date_input")
     with sc_col_btn:
-        st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
+        st.html("<div style='height:28px'></div>")
         getir = st.button("📥  Getir", type="primary", use_container_width=True, key="btn_sonuclar")
 
     if getir:
@@ -897,12 +889,12 @@ elif _sec == "sonuclar":
     sonuc_date_d = st.session_state.get("sonuc_date_display", "")
 
     if sonuc_data is None:
-        st.markdown("""
+        st.html("""
 <div style="text-align:center;padding:80px 20px">
   <div style="font-size:56px;margin-bottom:20px;opacity:.4">📊</div>
   <div style="font-size:20px;font-weight:700;color:#1e3a5f;margin-bottom:8px">Sonuçlar için hazır</div>
   <div style="font-size:14px;color:#1a2f4e">Geçmiş bir tarih seçip <b style="color:#2563eb">Getir</b> butonuna basın.</div>
-</div>""", unsafe_allow_html=True)
+</div>""")
 
     elif sonuc_sport == "nba":
         results = sonuc_data
@@ -926,7 +918,7 @@ elif _sec == "sonuclar":
   <td style="padding:12px 14px;text-align:center">{w_tag}</td>
 </tr>"""
 
-            st.markdown(f"""
+            st.html(f"""
 <div style="background:#080f1f;border:1px solid #0f1f38;border-radius:16px;overflow:hidden;margin-bottom:20px">
   <table style="width:100%;border-collapse:collapse">
     <thead><tr style="background:#0a1526">
@@ -937,7 +929,7 @@ elif _sec == "sonuclar":
     </tr></thead>
     <tbody>{rows_html}</tbody>
   </table>
-</div>""", unsafe_allow_html=True)
+</div>""")
 
             st.divider()
             for r in results:
@@ -948,7 +940,7 @@ elif _sec == "sonuclar":
                 with st.expander(f"🏀  {r['home_team']}  {home_pts} — {away_pts}  {r['away_team']}", expanded=False):
                     h_b = "font-weight:900;color:#f1f5f9" if home_won else "color:#334155"
                     a_b = "font-weight:900;color:#f1f5f9" if not home_won else "color:#334155"
-                    st.markdown(f"""
+                    st.html(f"""
 <div style="display:flex;justify-content:center;align-items:center;gap:32px;padding:24px 0 16px">
   <div style="text-align:right;flex:1">
     <div style="font-size:11px;color:#1e3a5f;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Ev Sahibi</div>
@@ -968,7 +960,7 @@ elif _sec == "sonuclar":
       <span style="font-size:17px;{a_b}">{r['away_team']}</span>
     </div>
   </div>
-</div>""", unsafe_allow_html=True)
+</div>""")
                     st.divider()
                     _safe_date = sonuc_date_d.replace("/", "")
                     btn_key = f"box_{_safe_date}_{game_id}"
@@ -1013,7 +1005,7 @@ elif _sec == "sonuclar":
   <td style="padding:12px 14px;text-align:center">{w_tag}</td>
 </tr>"""
 
-            st.markdown(f"""
+            st.html(f"""
 <div style="background:#080f1f;border:1px solid #0f1f38;border-radius:16px;overflow:hidden">
   <table style="width:100%;border-collapse:collapse">
     <thead><tr style="background:#0a1526">
@@ -1025,4 +1017,4 @@ elif _sec == "sonuclar":
     </tr></thead>
     <tbody>{rows_html}</tbody>
   </table>
-</div>""", unsafe_allow_html=True)
+</div>""")
