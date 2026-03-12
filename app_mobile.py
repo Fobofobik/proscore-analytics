@@ -253,7 +253,7 @@ def load_results(league_name: str, date_str: str | None = None):
     sport = cfg["sport"]
     if sport == "nba":
         return get_nba_results_by_date(date_str), sport
-    return get_results_by_date(league_id=cfg["id"], date=date_str), sport
+    return get_results_by_date(league_id=cfg["id"], season=cfg["season"], date_str=date_str), sport
 
 
 # ══════════════════════════════════════════════════════════════════════════════
