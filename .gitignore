@@ -1,0 +1,30 @@
+# Gizli bilgiler — ASLA commit etme
+.env
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Uygulama cache
+data/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# IDE
+.vscode/
+*.lnk
+
+# Desktop launcher (Windows'a özel)
+desktop_app.pyw
+launch.bat
+install.bat
+uninstall.bat
+setup.sh
+logo.ico
